@@ -3,33 +3,52 @@
     include_once "vendor/autoload.php";
 
     use App\Controller\Controller;
+    
 
     $data = [
         "session" => "2021/2022",
         "term" => "first term",
-        "school_id" => "1ebd125a-eb75-69f2-9d5b-247703ae1c78",
+        "school_id" => "1ebdf075-45f1-6eb4-933c-6cc21774b98e",
         "class" => "primary 6",
-        "subject" => "maths"
+        "subject" => "Integerated Science"
     ];
 
     $examData = [
-        "assessment_id" => "1ebde4ca-76c3-640e-ad3e-247703ae",
+        "assessment_id" => "1ebdf080-da1f-68ba-8339-6cc21774",
         "duration" => "1:30 hour"
     ];
 
     $questionDetails = [
         "exam_id" => "1ebde4ed-8790-62f0-a377-247703ae1c78",
-        "question" => "question....",
-        "options" => ["hello","world","loop","free"],
-        "answer" => "free"
+        "question" => "When can i start?",
+        "options" => ["hello","world","tomorrow","now"],
+        "answer" => "now"
     ];
 
+    $schoolData = [
+        "school_id" => "1ebdf075-45f1-6eb4-933c-6cc21774b98e",
+        "assessment_id" => "1ebdf080-da1f-68ba-8339-6cc21774",
+        "class" => "primary 6",
+        "exam_id" => "1ebdf084-c347-69f4-b41c-6cc21774b98e"
+    ];
+
+    $school = [
+        "school" => "Middlesex"
+    ];
+    $questionAndAnswer = [
+        "question_id" => "1ebdf088-ac5d-68c0-a623-6cc21774b98e",
+        "student_id" => "1ebcec12-abd9-6c62-a8c0-6cc21774b98e",
+        "exam_id" => "1ebde4ed-8790-62f0-a377-247703ae1c78",
+        "choice" => "free",
+        "actual_value" => md5("free")
+    ];
 
     $controller = new Controller;
-
+    //$controller->createSchool($school);
+    $controller->fetchStudentAnswers($schoolData);
     //$controller->createAssessment($data);
     //$controller->createExam($examData);
     //$controller->createExamQuestions($questionDetails);
-    //$controller->fetchQuestion("1ebde4ed-8790-62f0-a377-247703ae1c78");
-    $controller->submitQuestion();
+    //print_r($controller->fetchQuestion("1ebde4ed-8790-62f0-a377-247703ae1c78"));
+    //$controller->submitQuestion($questionAndAnswer);
 ?>
