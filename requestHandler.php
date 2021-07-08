@@ -1,14 +1,18 @@
 <?php
     include_once "./vendor/autoload.php";
 
-    use App\Controllers\AttendanceController;
-    use App\Controllers\Teachers;
-    use App\Controllers\Assingment;
+    use App\Controller\Attendance;
+    use App\Controller\Faculty;
+    use App\Controller\Assingment;
+    use App\Controller\Controller;
 
-    
+    if(isset($_POST['createAssessment'])){
+        $ctrl = new Controller;
+        $ctrl->createAssessment($_POST);
+    }
     if(isset($_POST['login'])){
 
-        $teacher = new Teachers;
+        $teacher = new Faculty;
         $data = [
             "email" => $_POST['email'],
             "password" => $_POST['password']

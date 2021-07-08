@@ -48,10 +48,10 @@
             return $res;
         }
 
-        public function fetchSchoolAssessment($school_id){
-            $sql = "SELECT * FROM assessments WHERE school_id = ?";
+        public function fetchSchoolAssessment($queryData){
+            $sql = "SELECT * FROM assessments WHERE school_id = ? AND class = ?";
             $prepStmt = $this->connectDB()->prepare($sql);
-            $exec = $prepStmt->execute([$school_id]);
+            $exec = $prepStmt->execute([$queryData['school_id'],$queryData['class']]);
             $res = $prepStmt->fetchAll();
             return $res;
         }
@@ -93,7 +93,5 @@
         public function fetchAllStudentResult($resultData){
             $sql = "SELECT * FROM student s join ";
         }
-
-        public function 
     }
 ?>

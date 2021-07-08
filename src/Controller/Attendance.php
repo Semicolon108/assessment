@@ -1,11 +1,11 @@
 <?php
-    namespace App\Controllers;
+    namespace App\Controller;
 
-    use App\Controllers\Database;
-    use App\Controllers\Student;
+    use App\Controller\Database;
+    use App\Controller\Student;
     use PDO;
 
-    class AttendanceController extends Database{
+    class Attendance extends Database{
         private $studentId;
         private $week;
         private $day;

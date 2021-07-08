@@ -45,8 +45,8 @@
 
     $controller = new Controller;
     //$controller->createSchool($school);
-    $controller->fetchStudentAnswers($schoolData);
-    //$controller->createAssessment($data);
+    //$controller->fetchStudentAnswers($schoolData);
+    $controller->createAssessment($data);
     //$controller->createExam($examData);
     //$controller->createExamQuestions($questionDetails);
     //print_r($controller->fetchQuestion("1ebde4ed-8790-62f0-a377-247703ae1c78"));

@@ -26,4 +26,5 @@
             return $this->DBHandler;
         }
     }
+    session_start();
 ?>

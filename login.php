@@ -56,7 +56,7 @@
             contentType: false,
             success: (response) => {
                 if(response == "success"){
-                   window.location.href = "teacherpanel.php";
+                   window.location.href = "assessment.php";
                 }else{
                     console.log(response);
                 }

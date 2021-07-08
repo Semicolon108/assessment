@@ -1,8 +1,8 @@
 <?php
-    namespace App\Controllers;
+    namespace App\Controller;
 
-    use App\Controllers\Database;
-    use App\Controllers\AttendanceController;
+    use App\Controller\Database;
+    use App\Controller\Attendance;
     use Ramsey\Uuid\Uuid;
 
     class Student extends Database{

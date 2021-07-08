@@ -1,7 +1,7 @@
 <?php
-    namespace App\Controllers;
+    namespace App\Controller;
 
-    use App\Controllers\Database;
+    use App\Controller\Database;
     use Ramsey\Uuid\Uuid;
     
     class School extends Database{

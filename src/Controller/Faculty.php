@@ -1,11 +1,11 @@
 <?php
-    namespace App\Controllers;
+    namespace App\Controller;
 
-    use App\Controllers\Database;
+    use App\Controller\Database;
     use Ramsey\Uuid\Uuid;
     use PDO;
 
-    class Teachers extends Database{
+    class Faculty extends Database{
         private $name;
         private $teacherId;
         private $email;
