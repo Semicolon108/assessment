@@ -21,7 +21,7 @@
             $sql = "SELECT * FROM teacher WHERE email = ?";
             $prepStmt = $this->connectDB()->prepare($sql);
             $exec = $prepStmt->execute([$this->email]);
-            $res = $prepStmt->fetch(PDO::FETCH_ASSOC);
+            $res = $prepStmt->fetch();
             if($prepStmt->rowCount() > 0){
                 $_SESSION['teacher'] = $res;
                 return true;

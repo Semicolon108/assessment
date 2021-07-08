@@ -9,9 +9,9 @@
         public function createAssessment($data){
             $assessment_id = Uuid::uuid6()->toString();
 
-            $sql = "INSERT INTO assessments(assessment_id,school_id,assessment_session,subject,class,term) VALUE (?,?,?,?,?,?)";
+            $sql = "INSERT INTO assessments(assessment_id,school_id,assessment_session,subject,class,term,faculty_id) VALUE (?,?,?,?,?,?,?)";
             $prepStmt = $this->connectDB()->prepare($sql);
-            $exec = $prepStmt->execute([$assessment_id,$data['school_id'],$data['session'],$data['subject'],$data['class'],$data['term']]);
+            $exec = $prepStmt->execute([$assessment_id,$data['school_id'],$data['session'],$data['subject'],$data['class'],$data['term'],$data['faculty_id']]);
             if($exec){
                 echo "Assessment created";
             }
@@ -49,11 +49,29 @@
         }
 
         public function fetchSchoolAssessment($queryData){
-            $sql = "SELECT * FROM assessments WHERE school_id = ? AND class = ?";
+            $sql = "SELECT * FROM assessments WHERE school_id = ? AND faculty_id = ? ORDER BY id DESC";
             $prepStmt = $this->connectDB()->prepare($sql);
-            $exec = $prepStmt->execute([$queryData['school_id'],$queryData['class']]);
+            $exec = $prepStmt->execute([$queryData['school_id'],$queryData['faculty_id']]);
             $res = $prepStmt->fetchAll();
             return $res;
+        }
+
+        public function reFetchAssessment($schoolData){
+            $assessments = $this->fetchSchoolAssessment($schoolData);
+            
+            $index = 1;
+            foreach($assessments as $assessment){
+                echo "<tr>";
+                echo "<th scope='row'>".$index."</th>";
+                echo "<td>".$assessment['assessment_session']."</td>";
+                echo "<td>".$assessment['class']."</td>";
+                echo "<td>".$assessment['term']."</td>";
+                echo "<td>".$assessment['subject']."</td>";
+                echo "<td class='btn' onclick='setQuestion(this.id)' role='button' id='id_".$assessment['assessment_id']."'>Create Exam</td>";
+                echo "</tr>";
+                $index++;
+            }
+           
         }
 
         public function submitQuestion($questionAndAnswer){

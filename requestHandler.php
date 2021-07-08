@@ -10,6 +10,18 @@
         $ctrl = new Controller;
         $ctrl->createAssessment($_POST);
     }
+    if(isset($_POST['createExam'])){
+        $ctrl = new Controller;
+        $ctrl->createExam($_POST);
+    }
+    if(isset($_POST['reload'])){
+        $ctrl = new Controller;
+        $schoolData = [
+            "school_id" => $_POST['schoolId'],
+            "faculty_id" => $_POST['facultyId']
+        ];
+        $ctrl->reFetchAssessment($schoolData);
+    }
     if(isset($_POST['login'])){
 
         $teacher = new Faculty;

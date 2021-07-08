@@ -1,6 +1,6 @@
 <?php
     namespace App\Controller;
-
+    session_start();
     use PDO,PDOException;
 
     class Database{
@@ -26,5 +26,4 @@
             return $this->DBHandler;
         }
     }
-    session_start();
 ?>
