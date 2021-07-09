@@ -15,20 +15,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script>
         const createExam = (id) => {
-            //$("#staticBackdrop2").modal("show");
+            $("#staticBackdrop2").modal("show");
             //console.log(id.split("_").pop());
-            window.location.href = "createExam.php?assessment_id="+id.split("_").pop();
+            //window.location.href = "createExam.php?assessment_id="+id.split("_").pop();
         }
     </script>
-    <script src="https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
+    
 </head>
 <body>
     <header class="w-100 bg-light border shadow-3" style="height:90px">
     </header>
     <section class="row my-3">
         <div class="col-2 border" style="height:90vh"></div>
-        <div class="col-10">
-            <div class="container col-11 mx-auto border bg-light" style="height:54px;">
+        <div class="col-10 row">
+            <div class="container col-12 mx-auto border bg-light" style="height:54px;">
                 <span role="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" class="rounded-circle btn float-end border mt-3 d-flex align-items-center justify-content-center" style="width:24px;height:24px;"><img src="https://img.icons8.com/ios-filled/45/000000/add--v1.png"/></span>
                 <!-- Button trigger modal -->
 
@@ -77,7 +77,7 @@
                 </div>
                 </div>
             </div>
-            <div class="container col-9 mx-auto my-5 h-75 border bg-light">
+            <div class="container col-7 ms-0 my-5 h-75 border bg-light">
                 <h4 class="text-center">Assessments</h4>
                 <table class="table table-striped">
                     <thead>
@@ -89,7 +89,7 @@
                         <th scope="col">subject</th>
                         </tr>
                     </thead>
-                    <tbody class="reload">
+                    <tbody id="reload">
                     <?php
                         $schoolData = [
                             "school_id" => $_SESSION['teacher']['school_id'],
@@ -97,6 +97,7 @@
                         ];
                         $assessments = $ctrl->fetchSchoolAssessment($schoolData);
                         $index = 1;
+                        //print_r($_SESSION['teacher']);
                         foreach($assessments as $assessment):
                     ?>
                             <tr>
@@ -114,22 +115,30 @@
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="staticBackdropLabel">Set question</h5>
+                                            <h5 class="modal-title" id="staticBackdropLabel">Set Exam</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <div>
-                                                <label for="floatingTextarea">Question</label>
-                                                <textarea class="form-control" name="editor" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="exampleInputEmail1" class="form-label">Exam duration</label>
+                                                <input type="text" class="form-control" id="exam_duration">
                                             </div>
-                                            <div class="container-fluid border mt-3" style="height:60px" id="optionPane">
-                                                <button class="float-end btn btn-success mt-2 btn-sm" id="addOption">Add Option</button>
+                                            <div class="mb-3">
+                                                <label for="exampleInputEmail1" class="form-label">Exam Time</label>
+                                                <input type="time" class="form-control" id="exam_time">
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="exampleInputEmail1" class="form-label">Exam date</label>
+                                                <input type="date" class="form-control" id="exam_date">
+                                            </div>
+                                            <button type="submit" id="createExam" class="btn btn-primary">Submit</button>
+                                        </form>
                                         </div>
-                                        <div class="modal-footer">
+                                        <!--div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             <button type="button" class="btn btn-primary">Understood</button>
-                                        </div>
+                                        </div-->
                                         </div>
                                     </div>
                                 </div>
@@ -141,12 +150,13 @@
                     </tbody>
                 </table>
             </div>
+            <div class="col-4 border my-5 mx-auto border bg-light" style="height:450px">
+            </div>
         </div>
     </section>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script>
-    CKEDITOR.replace( 'editor' );
         $("#create").click(() => {
             const values = [$("#class").val(),$("#subject").val(),$("#session").val(),$("#term").val(),$("#schoolId").val(),$("#facultyId").val()];
             const keys = ["class","subject","session","term","school_id","faculty_id"];
@@ -163,7 +173,7 @@
                 processData: false,
                 contentType: false,
                 success: (res) => {
-                    $(".reload").load("requestHandler.php",{
+                    $("#reload").load("requestHandler.php",{
                         reload: true,
                         schoolId: $("#schoolId").val(),
                         facultyId: $("#facultyId").val()
@@ -178,6 +188,27 @@
                 $("#optionPane").append(option);
             })
         })
+        $("#createExam").click((e) => {
+            e.preventDefault();
+           let data = new FormData()
+           data.append("duration",$("#exam_duration").val())
+           data.append("assessment_id",$("#assessment_id").val())
+           data.append("date",$("#exam_date").val());
+           data.append("time",$("#exam_time"));
+           data.append("createExam",true);
+
+           $.ajax({
+               url: "requestHandler.php",
+               method: "POST",
+               data: data,
+               cache: false,
+               contentType: false,
+               processData: false,
+               success: (res) => {
+                   console.log(res)
+                }
+           })
+       })
     </script>
 </body>
 </html>

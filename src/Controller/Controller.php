@@ -19,9 +19,9 @@
 
         public function createExam($examData){
             $exam_id = Uuid::uuid6()->toString();
-            $sql = "INSERT INTO exam(exam_id,assessment_id,duration) VALUE (?,?,?)";
+            $sql = "INSERT INTO exam(exam_id,assessment_id,duration,exam_date,exam_time) VALUE (?,?,?,?,?)";
             $prepStmt = $this->connectDB()->prepare($sql);
-            $exec = $prepStmt->execute([$exam_id,$examData['assessment_id'],$examData['duration']]);
+            $exec = $prepStmt->execute([$exam_id,$examData['assessment_id'],$examData['duration'],$examData['date'],$examData['time']]);
             if($exec){
                 echo "exam created";
             }
