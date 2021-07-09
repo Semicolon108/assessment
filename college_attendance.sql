@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 08, 2021 at 09:28 AM
+-- Generation Time: Jul 09, 2021 at 11:45 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 7.4.16
 
@@ -34,15 +34,17 @@ CREATE TABLE `assessments` (
   `assessment_session` varchar(255) NOT NULL,
   `term` varchar(30) NOT NULL,
   `class` varchar(36) NOT NULL,
-  `subject` varchar(255) NOT NULL
+  `subject` varchar(255) NOT NULL,
+  `faculty_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `assessments`
 --
 
-INSERT INTO `assessments` (`id`, `assessment_id`, `school_id`, `assessment_session`, `term`, `class`, `subject`) VALUES
-(5, '1ebdf94a-4272-6ed6-84cd-247703ae', '1ebdf816-0b70-6d32-bcbf-247703ae', '2020/2021', 'first term', 'primary 3', 'maths');
+INSERT INTO `assessments` (`id`, `assessment_id`, `school_id`, `assessment_session`, `term`, `class`, `subject`, `faculty_id`) VALUES
+(11, '1ebe036e-9e57-614c-bbfa-247703ae', '1ebdf816-0b70-6d32-bcbf-247703ae', '2020/2021', 'first term', 'primary 3', 'english', '1ebd1278-a99a-60aa-a8e0-247703ae1c78'),
+(12, '1ebe037c-119d-6fea-ae83-247703ae', '1ebdf816-0b70-6d32-bcbf-247703ae', '2020/2021', 'first term', 'primary 6', 'maths', '1ebd1278-a99a-60aa-a8e0-247703ae1c78');
 
 -- --------------------------------------------------------
 
@@ -113,17 +115,17 @@ CREATE TABLE `exam` (
   `id` int(11) NOT NULL,
   `exam_id` varchar(36) NOT NULL,
   `assessment_id` varchar(36) NOT NULL,
-  `duration` varchar(18) NOT NULL
+  `duration` varchar(18) NOT NULL,
+  `exam_date` varchar(255) NOT NULL,
+  `exam_time` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `exam`
 --
 
-INSERT INTO `exam` (`id`, `exam_id`, `assessment_id`, `duration`) VALUES
-(1, '1ebde313-59af-64ac-937f-247703ae1c78', '3546588', '1 hour'),
-(2, '1ebde4cf-715f-65ee-95fc-247703ae1c78', '1ebde4ca-76c3-640e-ad3e-247703ae', '1:30 hour'),
-(3, '1ebde4ed-8790-62f0-a377-247703ae1c78', '1ebde4ca-76c3-640e-ad3e-247703ae', '1:30 hour');
+INSERT INTO `exam` (`id`, `exam_id`, `assessment_id`, `duration`, `exam_date`, `exam_time`) VALUES
+(4, '1ebe07c0-91f6-62bc-8cf6-247703ae1c78', 'undefined', '1 hour', '2021-07-21', '0');
 
 -- --------------------------------------------------------
 
@@ -206,7 +208,7 @@ INSERT INTO `students` (`id`, `student_id`, `name`, `class`, `attendance`) VALUE
 
 CREATE TABLE `teacher` (
   `id` int(11) NOT NULL,
-  `teachers_id` varchar(255) NOT NULL,
+  `faculty_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `assinged_class` varchar(255) NOT NULL,
@@ -220,8 +222,8 @@ CREATE TABLE `teacher` (
 -- Dumping data for table `teacher`
 --
 
-INSERT INTO `teacher` (`id`, `teachers_id`, `name`, `email`, `assinged_class`, `password`, `subjects`, `class_to_teach`, `school_id`) VALUES
-(4, '1ebd1278-a99a-60aa-a8e0-247703ae1c78', 'Mr Boye', 'boye@teacher.com', 'primary 6', 'teacherboye', 'english,maths', 'primary 3,primary 6', '1ebdf816-0b70-6d32-bcbf-247703ae1c78'),
+INSERT INTO `teacher` (`id`, `faculty_id`, `name`, `email`, `assinged_class`, `password`, `subjects`, `class_to_teach`, `school_id`) VALUES
+(4, '1ebd1278-a99a-60aa-a8e0-247703ae1c78', 'Mr Boye', 'boye@teacher.com', 'primary 6', 'teacherboye', 'english,maths', 'primary 3,primary 6', '1ebdf816-0b70-6d32-bcbf-247703ae'),
 (5, '1ebd127d-1ecf-6326-8888-247703ae1c78', 'Mr Gbenga', 'gbenga@teacher.com', 'primary 6', 'teacherboye', 'verbal reasoning,Integerated science', 'primary 1,primary 3,primary 4', '1ebd1259-97fb-6d22-85ed-247703ae1c78');
 
 --
@@ -296,7 +298,7 @@ ALTER TABLE `teacher`
 -- AUTO_INCREMENT for table `assessments`
 --
 ALTER TABLE `assessments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `assingment`
@@ -320,7 +322,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `exam`
 --
 ALTER TABLE `exam`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `exam_answers`

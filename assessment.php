@@ -205,8 +205,8 @@
                contentType: false,
                processData: false,
                success: (res) => {
-                   console.log(res)
-                }
+                    
+               }
            })
        })
     </script>
