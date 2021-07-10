@@ -37,8 +37,8 @@
     ];
 
     $schoolDetails = [
-        "school_id" => "1ebd1259-97fb-6d22-85ed-247703ae",
-        "faculty_id" => "1ebd127d-1ecf-6326-8888-247703ae1c78"
+        "school_id" => "1ebdf816-0b70-6d32-bcbf-247703ae1c78",
+        "faculty_id" => "1ebd1278-a99a-60aa-a8e0-247703ae1c78"
     ];
     $questionAndAnswer = [
         "question_id" => "1ebdf088-ac5d-68c0-a623-6cc21774b98e",
@@ -49,6 +49,7 @@
     ];
 
     $controller = new Controller;
+    //$controller->fetchExam("1ebe036e-9e57-614c-bbfa-247703ae");
     //$controller->createSchool($school);
     //$controller->fetchStudentAnswers($schoolData);
     //$controller->createAssessment($data);
@@ -56,6 +57,6 @@
     //$controller->createExamQuestions($questionDetails);
     //print_r($controller->fetchQuestion("1ebde4ed-8790-62f0-a377-247703ae1c78"));
     //$controller->submitQuestion($questionAndAnswer);
-    //print_r($controller->fetchSchoolAssessment($schoolDetails));
-    $controller->reFetchAssessment($schoolDetails);
+    $controller->fetchSchoolAssessment($schoolDetails);
+    //$controller->reFetchAssessment($schoolDetails);
 ?>

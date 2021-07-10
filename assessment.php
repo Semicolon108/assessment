@@ -13,13 +13,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script>
-        const createExam = (id) => {
-            $("#staticBackdrop2").modal("show");
-            //console.log(id.split("_").pop());
-            //window.location.href = "createExam.php?assessment_id="+id.split("_").pop();
+
+    <style>
+        .table tbody tr.highlight td {
+            background-color: #ddd;
         }
-    </script>
+    </style>
+    
     
 </head>
 <body>
@@ -65,7 +65,6 @@
                         </select>
                         <input type="text" class="form-control mt-4" id="session" placeholder="session">
                         <input type="text" class="form-control mt-4" id="term" placeholder="term">
-                        <input type="hidden" id="schoolId" value="<?= $_SESSION['teacher']['school_id']?>" />
 
                         <input type="hidden" id="facultyId" value='<?=$_SESSION['teacher']['faculty_id']?>'' />
                     </div>
@@ -79,7 +78,7 @@
             </div>
             <div class="container col-7 ms-0 my-5 h-75 border bg-light">
                 <h4 class="text-center">Assessments</h4>
-                <table class="table table-striped">
+                <table class="table">
                     <thead>
                         <tr>
                         <th scope="col">#</th>
@@ -87,29 +86,40 @@
                         <th scope="col">Class</th>
                         <th scope="col">Term</th>
                         <th scope="col">subject</th>
+                        <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody id="reload">
                     <?php
-                        $schoolData = [
-                            "school_id" => $_SESSION['teacher']['school_id'],
+                        $queryData = [
                             "faculty_id" => $_SESSION['teacher']['faculty_id']
                         ];
-                        $assessments = $ctrl->fetchSchoolAssessment($schoolData);
+
+                        $assessments = $ctrl->fetchSchoolAssessment($queryData);
                         $index = 1;
                         //print_r($_SESSION['teacher']);
+                        //print_r($assessments);
                         foreach($assessments as $assessment):
                     ?>
-                            <tr>
+                            <tr role="button">
                                 <th scope="row"><?=$index?></th>
                                 <td><?=$assessment['assessment_session']?></td>
-                                <td hidden><?= $assessment['assessment_id']?></td>
+                                <td class="assessment_id" hidden><?=$assessment['assessment_id']?></td>
                                 <td><?=$assessment['class']?></td>
                                 <td><?=$assessment['term']?></td>
-                                <td><?=$assessment['subject']?></td>
-                                <td role="button" class="btn" id="<?= 'id_'.$assessment['assessment_id']?>" onclick="createExam(this.id)">Create Exam</td>
+                                <td><?=$assessment['assessment_subject']?></td>
+                                <?php
+                                    if(!$ctrl->hasExam($assessment['assessment_id'])):
+                                ?>
+                                    <td><button class="btn btn-sm btn-success create" id="<?='id_'.$assessment['assessment_id']?>">Create Exam</button></td>
                                 <!-- Button trigger modal -->
-
+                                <?php
+                                    else:
+                                ?>
+                                        <td><button class="btn btn-sm btn-success create" id="<?='id_'.$assessment['assessment_id']?>">View Exam</button></td>
+                                <?php
+                                    endif;
+                                ?>
                                 <!-- Modal -->
                                 <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -121,24 +131,20 @@
                                         <div class="modal-body">
                                         <form>
                                             <div class="mb-3">
-                                                <label for="exampleInputEmail1" class="form-label">Exam duration</label>
-                                                <input type="text" class="form-control" id="exam_duration">
-                                            </div>
+                                                <label class="form-label">Exam duration</label>
+                                                <input type="text" class="form-control" id="exam_duration">                                            </div>
                                             <div class="mb-3">
-                                                <label for="exampleInputEmail1" class="form-label">Exam Time</label>
+                                                <label class="form-label">Exam Time</label>
                                                 <input type="time" class="form-control" id="exam_time">
+                                                <input type='hidden' id='assessment_id' val=''>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="exampleInputEmail1" class="form-label">Exam date</label>
+                                                <label class="form-label">Exam date</label>
                                                 <input type="date" class="form-control" id="exam_date">
                                             </div>
                                             <button type="submit" id="createExam" class="btn btn-primary">Submit</button>
                                         </form>
                                         </div>
-                                        <!--div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Understood</button>
-                                        </div-->
                                         </div>
                                     </div>
                                 </div>
@@ -150,7 +156,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-4 border my-5 mx-auto border bg-light" style="height:450px">
+            <div class="col-5 border my-5 mx-auto border bg-light" style="height:450px">
+                <h4 class="text-center">Assessment Details</h4>
+                <div class="col-12 h-100" id="exam"></div>
             </div>
         </div>
     </section>
@@ -158,8 +166,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script>
         $("#create").click(() => {
-            const values = [$("#class").val(),$("#subject").val(),$("#session").val(),$("#term").val(),$("#schoolId").val(),$("#facultyId").val()];
-            const keys = ["class","subject","session","term","school_id","faculty_id"];
+            const values = [$("#class").val(),$("#subject").val(),$("#session").val(),$("#term").val(),$("#facultyId").val()];
+            const keys = ["class","subject","session","term","faculty_id"];
             const data = new FormData();
             for(let key in keys){
                 data.append(keys[key],values[key]);
@@ -169,32 +177,49 @@
                 url : "requestHandler.php",
                 method: "POST",
                 data : data,
+                dataType: "JSON",
                 cache: false,
                 processData: false,
                 contentType: false,
                 success: (res) => {
-                    $("#reload").load("requestHandler.php",{
-                        reload: true,
-                        schoolId: $("#schoolId").val(),
-                        facultyId: $("#facultyId").val()
-                    });
-                    console.log(res);
+                    if(res.status == "success"){
+                        $("#staticBackdrop").modal('hide');
+                        $("#reload").load("requestHandler.php",{
+                            reload: true,
+                            facultyId: $("#facultyId").val()
+                        });
+                        $("#staticBackdrop").find('input').val("");
+                        //$("#staticBackdrop").find('sel').val("");
+                        console.log(res.message);
+                    }else{
+                        console.log(res.message);
+                    }
+                    //console.log(response.status);
                 }
             })
+
+            console.log(values);
+
+
         })
-        $(document).ready(function(){
+        $(".create").click(function(){
+            let id = $(this).attr("id").split("_").pop();
+            $("#assessment_id").val(id)
+            $("#staticBackdrop2").modal("show");
+        })
+        /*$(document).ready(function(){
             $("#addOption").click(() => {
                 let option = "<input type='text' class='form-control mt-5'>";
                 $("#optionPane").append(option);
             })
-        })
+        })*/
         $("#createExam").click((e) => {
             e.preventDefault();
            let data = new FormData()
            data.append("duration",$("#exam_duration").val())
            data.append("assessment_id",$("#assessment_id").val())
            data.append("date",$("#exam_date").val());
-           data.append("time",$("#exam_time"));
+           data.append("time",$("#exam_time").val());
            data.append("createExam",true);
 
            $.ajax({
@@ -209,6 +234,23 @@
                }
            })
        })
+       $('table').on('click', 'tbody tr', function(event) {
+            $(this).addClass('highlight').siblings().removeClass('highlight');
+            let id = $(this).children(".assessment_id").text();
+            $("#exam").load("requestHandler.php",{
+                loadExam: true,
+                assessmentId: id
+            });
+            console.log(id);
+        });
+        $(document).ready(()=>{
+            $("tbody tr:first-child").addClass('highlight');
+            //console.log($("tbody tr:first-child").find(".assessment_id").text());
+            $("#exam").load("requestHandler.php",{
+                loadExam: true,
+                assessmentId: $("tbody tr:first-child").find(".assessment_id").text()
+            });
+        })
     </script>
 </body>
 </html>

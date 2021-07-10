@@ -14,10 +14,13 @@
         $ctrl = new Controller;
         $ctrl->createExam($_POST);
     }
+    if(isset($_POST['loadExam'])){
+        $ctrl = new Controller;
+        $ctrl->fetchExam($_POST['assessmentId']);
+    }
     if(isset($_POST['reload'])){
         $ctrl = new Controller;
         $schoolData = [
-            "school_id" => $_POST['schoolId'],
             "faculty_id" => $_POST['facultyId']
         ];
         $ctrl->reFetchAssessment($schoolData);

@@ -7,13 +7,30 @@
     class Controller extends Database{
 
         public function createAssessment($data){
-            $assessment_id = Uuid::uuid6()->toString();
 
-            $sql = "INSERT INTO assessments(assessment_id,school_id,assessment_session,subject,class,term,faculty_id) VALUE (?,?,?,?,?,?,?)";
-            $prepStmt = $this->connectDB()->prepare($sql);
-            $exec = $prepStmt->execute([$assessment_id,$data['school_id'],$data['session'],$data['subject'],$data['class'],$data['term'],$data['faculty_id']]);
-            if($exec){
-                echo "Assessment created";
+            $sqlValidate = "SELECT * FROM assessments WHERE assessment_session = ? AND class = ? AND term = ? AND faculty_id = ? AND assessment_subject = ?";
+            $prepValidate = $this->connectDB()->prepare($sqlValidate);
+            $execValidate = $prepValidate->execute([$data['session'],$data['class'],$data['term'],$data['faculty_id'],$data['subject']]);
+            $res = $prepValidate->fetchAll();
+            if($prepValidate->rowCount() > 0){
+                $response = [
+                    "status" => "error",
+                    "message" => "Assessment already created"
+                ];
+                echo json_encode($response);
+            }else{
+                $assessment_id = Uuid::uuid6()->toString();
+
+                $sql = "INSERT INTO assessments(assessment_id,assessment_session,assessment_subject,class,term,faculty_id) VALUE (?,?,?,?,?,?)";
+                $prepStmt = $this->connectDB()->prepare($sql);
+                $exec = $prepStmt->execute([$assessment_id,$data['session'],$data['subject'],$data['class'],$data['term'],$data['faculty_id']]);
+                if($exec){
+                    $response = [
+                        "status" => "success",
+                        "message" => "Assessment created"
+                    ];
+                    echo json_encode($response);
+                }
             }
         }
 
@@ -49,9 +66,9 @@
         }
 
         public function fetchSchoolAssessment($queryData){
-            $sql = "SELECT * FROM assessments WHERE school_id = ? AND faculty_id = ? ORDER BY id DESC";
+            $sql = "SELECT * FROM assessments WHERE faculty_id = ? ORDER BY id DESC";
             $prepStmt = $this->connectDB()->prepare($sql);
-            $exec = $prepStmt->execute([$queryData['school_id'],$queryData['faculty_id']]);
+            $exec = $prepStmt->execute([$queryData['faculty_id']]);
             $res = $prepStmt->fetchAll();
             return $res;
         }
@@ -66,12 +83,52 @@
                 echo "<td>".$assessment['assessment_session']."</td>";
                 echo "<td>".$assessment['class']."</td>";
                 echo "<td>".$assessment['term']."</td>";
-                echo "<td>".$assessment['subject']."</td>";
-                echo "<td class='btn' onclick='setQuestion(this.id)' role='button' id='id_".$assessment['assessment_id']."'>Create Exam</td>";
+                echo "<td>".$assessment['assessment_subject']."</td>";
+                if(!$this->hasExam($assessment['assessment_id'])){
+                    echo "<td>
+                            <button class='btn btn-sm btn-success create' id='id_'".$assessment['assessment_id']."'>Create Exam</button>
+                        </td>";
+                }else{
+                    echo "<td>
+                            <button class='btn btn-sm btn-success create' id='id_'".$assessment['assessment_id']."'>View Exam</button>
+                        </td>";
+                }
                 echo "</tr>";
                 $index++;
             }
            
+        }
+
+        public function hasExam($assessment_id){
+            $sql = "SELECT * FROM exam WHERE assessment_id = ?";
+            $prepStmt = $this->connectDB()->prepare($sql);
+            $exec = $prepStmt->execute([$assessment_id]);
+            $res = $prepStmt->fetchAll();
+            if($prepStmt->rowCount() > 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        public function fetchExam($queryData){
+            $sql = "SELECT * FROM exam e join assessments a on
+                    e.assessment_id = a.assessment_id
+                    join teacher t on t.faculty_id = a.faculty_id
+                    join school s on s.school_id = t.school_id
+                    WHERE e.assessment_id = ?";
+            $prepStmt = $this->connectDB()->prepare($sql);
+            $exec = $prepStmt->execute([$queryData]);
+            $res = $prepStmt->fetch();
+            if($prepStmt->rowCount() > 0){
+                echo "<h4 class=''>School Name: ".$res['school_name']."</div>";
+                echo "<h4 class=''> Exam date: ".$res['exam_date']."</div>";
+                echo "<h4 class=''> Exam time: ".$res['exam_time']."</div>";
+                echo "<h4 class=''> Exam duration: ".$res['duration']."</div>";
+            }else{
+                echo "No exam for this assessment yet!";
+            }
+            //print_r($res);
         }
 
         public function submitQuestion($questionAndAnswer){
